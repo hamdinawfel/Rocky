@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Rocky.Models.Application>
+
+<div class="container p-3">
+    <div class="row pt-3">
+        <div class="col-6">
+            <h1 class="text-primary">Application Type List</h1>
+        </div>
+        <div class="col-6 text-right">
+            <a asp-controller="Application" asp-action="Create" class="btn btn-primary">
+                Create New Application Type
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (Model.Count() > 0)
+{
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Application Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <th>@obj.Name</th>
+                    <th></th>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Nos Application type exists.</p>
+}
