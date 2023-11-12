@@ -1,10 +1,9 @@
 ﻿@using Rocky.Constants
 @model Rocky.Models.ViewModels.DetailsVM
 
-
 <div class="">
-
     <form method="post">
+        <input asp-for="@Model.Product.Id" hidden />
         <div class="container backgroundWhite pt-4">
 
             <div class="card" style="border:1px solid #000000; ">
@@ -40,10 +39,6 @@
                             <div class="col-12 col-lg-8">
 
                                 <div class="row pl-3">
-
-
-
-
                                     <div class="col-12">
 
                                         <span class="badge p-3 border" style="background-color:lavenderblush">@Model.Product.Category.Name</span>
@@ -51,18 +46,10 @@
                                         <p class="text-secondary">@Html.Raw(Model.Product.Description) </p>
 
                                     </div>
-
-
-
-
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
 
                 <div class="card-footer bg-dark">
@@ -84,7 +71,7 @@
                             else
 
                             {
-                                <button type="submit" class="btn btn-info form-control btn-lg" style="height:50px;">Add to Cart</button>
+                                <button type="submit" asp-route-id="@Model.Product.Id"  class="btn btn-info form-control btn-lg" style="height:50px;">Add to Cart</button>
                             }
                         </div>
                     </div>
