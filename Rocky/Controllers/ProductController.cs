@@ -24,12 +24,12 @@ namespace Rocky.Controllers
         }
         public IActionResult Index()
         {
-            IEnumerable<Product> products = _db.Product;
-
-            foreach(var product in products)
-            {
-                product.Category = _db.Category.FirstOrDefault(x => x.Id == product.CategoryId);
-            }
+            IEnumerable<Product> products = _db.Product.Include(x => x.Category);
+            // Eager loading 'Inculde' is used to improve perf
+            //foreach(var product in products)
+            //{
+            //    product.Category = _db.Category.FirstOrDefault(x => x.Id == product.CategoryId);
+            //}
             return View(products);
         }
 
@@ -150,7 +150,7 @@ namespace Rocky.Controllers
             {
                 return NotFound();
             }
-            var product = _db.Product.Find(id);
+            var product = _db.Product.Include(x => x.Category).FirstOrDefault(x => x.Id == id);
 
             if (product == null)
             {
@@ -160,7 +160,7 @@ namespace Rocky.Controllers
             return View(product);
         }
 
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteProduct(int? id)
         {
