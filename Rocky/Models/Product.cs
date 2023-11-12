@@ -8,7 +8,8 @@ namespace Rocky.Models
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Decription { get; set; }
+        public string ShortDescription { get; set; }
+        public string Description { get; set; }
         public string ImageUrl { get; set; }
 
         [Range(1, int.MaxValue)]

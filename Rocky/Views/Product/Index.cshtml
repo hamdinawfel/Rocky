@@ -19,8 +19,10 @@
     <table class="table table-bordered table-striped" style="width:100%">
         <thead>
             <tr>
-                <th width="40%">Product Name</th>
-                <th width="40%">Price</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Short Description</th>
+                <th>Price</th>
                 <th></th>
             </tr>
         </thead>
@@ -29,6 +31,8 @@
             {
                 <tr>
                     <th>@obj.Name</th>
+                    <th>@obj.Category.Name</th>
+                    <th>@obj.ShortDescription</th>
                     <th>@obj.Price</th>
                     <th>
                         <div class="w-75 btn-group" role="group">
