@@ -41,7 +41,7 @@
                         </li>
                         <li>
                             @if (HttpContextAccessor.HttpContext.Session.Get<List<Product>>(WC.SessionCard) != null){
-                                <a asp-action="Index" asp-controller="Card" class="nav-link">
+                                <a asp-action="Index" asp-controller="Cart" class="nav-link">
                                     @{
                                         var count = HttpContextAccessor.HttpContext.Session.Get<List<Product>>(WC.SessionCard).Count;
                                     }
