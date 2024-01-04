@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Rocky.Models;
+using Rocky_Models;
 using System.Data;
 
 namespace Rocky.Data

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Rocky_Models;
+using System.Collections.Generic;
 
-namespace Rocky.Models.ViewModels
+namespace Rocky_Models.ViewModels
 {
     public class ProductUserVM
     {
