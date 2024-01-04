@@ -32,7 +32,7 @@ namespace Rocky
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
-            services.Configure<EmailSettings>(Configuration.GetSection("Email"));
+            services.Configure<AppSettings>(Configuration.GetSection("Email"));
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                      .AddDefaultTokenProviders()
