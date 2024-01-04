@@ -10,6 +10,6 @@ namespace Rocky.Models.ViewModels
         }
 
         public ApplicationUser ApplicationUser { get; set; }
-        public IEnumerable<Product> Products { get; set; }
+        public IList<Product> Products { get; set; }
     }
 }

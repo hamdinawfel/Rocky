@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rocky.Data;
+using Rocky.Utils.Email;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,12 +32,16 @@ namespace Rocky
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+            services.Configure<EmailSettings>(Configuration.GetSection("Email"));
+
             services.AddIdentity<IdentityUser, IdentityRole>()
                      .AddDefaultTokenProviders()
                      .AddDefaultUI()
                      .AddEntityFrameworkStores<RockyDbContext>();
 
             services.AddHttpContextAccessor();
+            services.AddTransient<IEmailSenderService, EmailSenderService>();
+
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(10);

@@ -1,13 +1,21 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Mailjet.Client.Resources;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Rocky.Constants;
 using Rocky.Data;
 using Rocky.Models;
 using Rocky.Models.ViewModels;
 using Rocky.Utils;
+using Rocky.Utils.Email;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 
 namespace Rocky.Controllers
 {
@@ -15,12 +23,21 @@ namespace Rocky.Controllers
     public class CartController : Controller
     {
         private readonly RockyDbContext _db;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IEmailSenderService _emailSenderService;
+        private readonly IOptions<EmailSettings> _emailSettings;
 
         [BindProperty]
         public ProductUserVM ProductUserVM { get; set; }
-        public CartController(RockyDbContext db)
+        public CartController(RockyDbContext db,
+                              IWebHostEnvironment webHostEnvironment,
+                              IEmailSenderService emailSenderService,
+                              IOptions<EmailSettings> emailSettings)
         {
             _db = db;
+            _webHostEnvironment = webHostEnvironment;
+            _emailSenderService = emailSenderService;
+            _emailSettings = emailSettings;
         }
 
         public IActionResult Index()
@@ -101,6 +118,58 @@ namespace Rocky.Controllers
             };
 
             return View(productUserVM);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Summary")]
+        public IActionResult SummaryPost(ProductUserVM ProductUserVM)
+        {
+            var PathToTemplate = _webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
+                + "templates" + Path.DirectorySeparatorChar.ToString() +
+                "Inquiry.html";
+
+            var subject = "New Inquiry";
+            string HtmlBody = "";
+            using (StreamReader sr = System.IO.File.OpenText(PathToTemplate))
+            {
+                HtmlBody = sr.ReadToEnd();
+            }
+            //Name: { 0}
+            //Email: { 1}
+            //Phone: { 2}
+            //Products: {3}
+
+            StringBuilder productListSB = new StringBuilder();
+            foreach (var prod in ProductUserVM.Products)
+            {
+                productListSB.Append($" - Name: {prod.Name} <span style='font-size:14px;'> (ID: {prod.Id})</span><br />");
+            }
+
+            string messageBody = string.Format(HtmlBody,
+                ProductUserVM.ApplicationUser.FullName,
+                ProductUserVM.ApplicationUser.Email,
+                ProductUserVM.ApplicationUser.PhoneNumber,
+            productListSB.ToString());
+
+
+
+             _emailSenderService.SendEmailAsync(new EmailDto
+            {
+                Addresses = _emailSettings.Value.EmailAdmin,
+                Message = messageBody,
+                Subject = subject,
+                //Attachments = new List<string> { filePath }
+            });
+
+            return RedirectToAction(nameof(InquiryConfirmation));
+        }
+
+        public IActionResult InquiryConfirmation()
+        {
+            HttpContext.Session.Clear();
+            return View();
         }
     }
 }
