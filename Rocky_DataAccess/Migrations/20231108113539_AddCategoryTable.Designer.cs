@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Rocky.Data;
+using Rocky_DataAccess.Data;
 
-namespace Rocky.Migrations
+namespace Rocky_DataAccess.Migrations
 {
     [DbContext(typeof(RockyDbContext))]
-    [Migration("20231108130341_AddApplicationTable")]
-    partial class AddApplicationTable
+    [Migration("20231108113539_AddCategoryTable")]
+    partial class AddCategoryTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,21 +19,6 @@ namespace Rocky.Migrations
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
-
-            modelBuilder.Entity("Rocky.Models.Application", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Application");
-                });
 
             modelBuilder.Entity("Rocky.Models.Category", b =>
                 {

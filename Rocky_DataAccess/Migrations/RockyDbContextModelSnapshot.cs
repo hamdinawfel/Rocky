@@ -3,17 +3,15 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Rocky.Data;
+using Rocky_DataAccess.Data;
 
-namespace Rocky.Migrations
+namespace Rocky_DataAccess.Migrations
 {
     [DbContext(typeof(RockyDbContext))]
-    [Migration("20231116132957_addFullNameColumnToUsersTable")]
-    partial class addFullNameColumnToUsersTable
+    partial class RockyDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,12 +168,10 @@ namespace Rocky.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -212,12 +208,10 @@ namespace Rocky.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -227,7 +221,7 @@ namespace Rocky.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Rocky.Models.Category", b =>
+            modelBuilder.Entity("Rocky_Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -246,7 +240,7 @@ namespace Rocky.Migrations
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("Rocky.Models.Product", b =>
+            modelBuilder.Entity("Rocky_Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -278,7 +272,7 @@ namespace Rocky.Migrations
                     b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("Rocky.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Rocky_Models.ApplicationUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
@@ -339,9 +333,9 @@ namespace Rocky.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Rocky.Models.Product", b =>
+            modelBuilder.Entity("Rocky_Models.Product", b =>
                 {
-                    b.HasOne("Rocky.Models.Category", "Category")
+                    b.HasOne("Rocky_Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)

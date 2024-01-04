@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Rocky.Data;
+using Rocky_DataAccess.Data;
 
-namespace Rocky.Migrations
+namespace Rocky_DataAccess.Migrations
 {
     [DbContext(typeof(RockyDbContext))]
-    [Migration("20231109084508_AddProductTable")]
-    partial class AddProductTable
+    [Migration("20231112104447_AddShortDescriptionColumnToProductTable")]
+    partial class AddShortDescriptionColumnToProductTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,21 +19,6 @@ namespace Rocky.Migrations
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
-
-            modelBuilder.Entity("Rocky.Models.Application", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Application");
-                });
 
             modelBuilder.Entity("Rocky.Models.Category", b =>
                 {
@@ -64,7 +49,7 @@ namespace Rocky.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Decription")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
@@ -75,6 +60,9 @@ namespace Rocky.Migrations
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
+
+                    b.Property<string>("ShortDescription")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

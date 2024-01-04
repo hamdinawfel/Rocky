@@ -1,4 +1,4 @@
-﻿namespace Rocky.Constants
+﻿namespace Rocky_Utility.Constants
 {
     public static class WC
     {

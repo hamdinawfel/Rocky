@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Rocky_Models;
-using System.Data;
 
-namespace Rocky.Data
+namespace Rocky_DataAccess.Data
 {
     public class RockyDbContext : IdentityDbContext
     {

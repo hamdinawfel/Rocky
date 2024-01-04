@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Rocky.Data;
+using Rocky_DataAccess.Data;
 
-namespace Rocky.Migrations
+namespace Rocky_DataAccess.Migrations
 {
     [DbContext(typeof(RockyDbContext))]
-    [Migration("20231112104447_AddShortDescriptionColumnToProductTable")]
-    partial class AddShortDescriptionColumnToProductTable
+    [Migration("20231112103050_RemoveApplicationTable")]
+    partial class RemoveApplicationTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,7 +49,7 @@ namespace Rocky.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Decription")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
@@ -60,9 +60,6 @@ namespace Rocky.Migrations
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
-
-                    b.Property<string>("ShortDescription")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

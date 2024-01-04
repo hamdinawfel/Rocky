@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using Rocky.Constants;
 using Rocky_Models;
+using Rocky_Utility.Constants;
 
 namespace Rocky.Areas.Identity.Pages.Account
 {

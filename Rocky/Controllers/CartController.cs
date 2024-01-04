@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Rocky.Constants;
-using Rocky.Data;
 using Rocky_Models;
 using Rocky_Models.ViewModels;
-using Rocky.Utils;
 using Rocky.Utils.Email;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using Rocky_DataAccess.Data;
+using Rocky_Utility.Constants;
+using Rocky.Extensions;
 
 namespace Rocky.Controllers
 {
