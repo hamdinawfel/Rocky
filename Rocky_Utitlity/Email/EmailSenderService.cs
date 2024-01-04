@@ -5,8 +5,9 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 using Serilog;
+using Rocky_Utility.Configuration.Models;
 
-namespace Rocky.Utils.Email
+namespace Rocky_Utility.Email
 {
     /// <summary>
     /// Email sender service

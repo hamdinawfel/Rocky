@@ -1,4 +1,4 @@
-﻿namespace Rocky.Utils.Email
+﻿namespace Rocky_Utility.Configuration.Models
 {
     public class EmailSettings
     {

@@ -1,13 +1,10 @@
-﻿using Mailjet.Client.Resources;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Rocky_Models;
 using Rocky_Models.ViewModels;
-using Rocky.Utils.Email;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,6 +13,8 @@ using System.Text;
 using Rocky_DataAccess.Data;
 using Rocky_Utility.Constants;
 using Rocky.Extensions;
+using Rocky_Utility.Configuration.Models;
+using Rocky_Utility.Email;
 
 namespace Rocky.Controllers
 {

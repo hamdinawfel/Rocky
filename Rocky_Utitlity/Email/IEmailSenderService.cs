@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Rocky.Utils.Email
+namespace Rocky_Utility.Email
 {
     public interface IEmailSenderService
     {

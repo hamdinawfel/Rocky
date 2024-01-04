@@ -1,18 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Rocky.Utils.Email;
 using Rocky_DataAccess.Data;
+using Rocky_Utility.Configuration.Models;
+using Rocky_Utility.Email;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Rocky
 {
@@ -32,7 +28,7 @@ namespace Rocky
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
-            services.Configure<AppSettings>(Configuration.GetSection("Email"));
+            services.Configure<EmailSettings>(Configuration.GetSection("Email"));
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                      .AddDefaultTokenProviders()

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Rocky.Utils.Email
+namespace Rocky_Utility.Email
 {
     public class EmailDto
     {
