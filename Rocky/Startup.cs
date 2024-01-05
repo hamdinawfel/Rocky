@@ -41,6 +41,7 @@ namespace Rocky
             services.AddTransient<IEmailSenderService, EmailSenderService>();
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddSession(options =>
             {

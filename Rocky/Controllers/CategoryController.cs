@@ -39,13 +39,13 @@ namespace Rocky.Controllers
             }
         }
 
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int? id)
         {
             if(id == null || id == 0)
             {
                 return NotFound();
             }
-            var category = _categoryRepository.Find(id);
+            var category = _categoryRepository.Find(id.GetValueOrDefault());
 
             if (category == null)
             {
@@ -71,13 +71,13 @@ namespace Rocky.Controllers
             }
         }
 
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
             {
                 return NotFound();
             }
-            var category = _categoryRepository.Find(id);
+            var category = _categoryRepository.Find(id.GetValueOrDefault());
 
             if (category == null)
             {
@@ -89,9 +89,9 @@ namespace Rocky.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteCategory(int id)
+        public IActionResult DeleteCategory(int? id)
         {
-            var category = _categoryRepository.Find(id);
+            var category = _categoryRepository.Find(id.GetValueOrDefault());
 
             if (category == null)
             {
