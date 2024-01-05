@@ -30,7 +30,7 @@ namespace Rocky.Controllers
         }
         public IActionResult Index()
         {
-            IEnumerable<Product> products = _productRepository.FindAll(null, null, "Category");
+            IEnumerable<Product> products = _productRepository.FindAll(includeProperties: "Category");
             // Eager loading 'Inculde' is used to improve perf
             //foreach(var product in products)
             //{
@@ -105,7 +105,7 @@ namespace Rocky.Controllers
                 else
                 {
                     //Updading
-                    var objFromDb = _productRepository.FirstOrDefault(u => u.Id == productVM.Product.Id);
+                    var objFromDb = _productRepository.FirstOrDefault(u => u.Id == productVM.Product.Id, isTracking:false);
 
                     if (files.Count > 0)
                     {
@@ -161,7 +161,7 @@ namespace Rocky.Controllers
             {
                 return NotFound();
             }
-            var product = _productRepository.FirstOrDefault(null, "Category");
+            var product = _productRepository.FirstOrDefault(x=>x.Id == id, includeProperties:"Category");
 
             if (product == null)
             {

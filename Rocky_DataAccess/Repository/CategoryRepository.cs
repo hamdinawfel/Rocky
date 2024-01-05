@@ -6,8 +6,10 @@ namespace Rocky_DataAccess.Repository
 {
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
+        private readonly RockyDbContext _db;
         public CategoryRepository(RockyDbContext db) : base(db)
         {
+            _db = db;
         }
 
         public void Update(Category obj)
