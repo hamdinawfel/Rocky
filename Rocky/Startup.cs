@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rocky_DataAccess.Data;
+using Rocky_DataAccess.Repository;
+using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Utility.Configuration.Models;
 using Rocky_Utility.Email;
 using System;
@@ -37,6 +39,8 @@ namespace Rocky
 
             services.AddHttpContextAccessor();
             services.AddTransient<IEmailSenderService, EmailSenderService>();
+
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             services.AddSession(options =>
             {
