@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Rocky.Extensions;
 using Rocky_DataAccess.Data;
+using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models;
 using Rocky_Models.ViewModels;
 using Rocky_Utility.Constants;
@@ -15,22 +16,29 @@ namespace Rocky.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly RockyDbContext _db;
+        private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
+
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(RockyDbContext db,
+        public HomeController(IProductRepository productRepository,
+                              ICategoryRepository categoryRepository,
                               ILogger<HomeController> logger)
         {
-            _db = db;
+            _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
+            var products = _productRepository.FindAll(includeProperties: "Category");
+            var categories = _categoryRepository.FindAll();
+
             var homeVM = new HomeVM
             {
-                Products = _db.Product.Include(x => x.Category),
-                Categories = _db.Category
+                Products = products,
+                Categories = categories
             };
 
             return View(homeVM);
@@ -60,9 +68,11 @@ namespace Rocky.Controllers
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCard);
             }
 
+            var product = _productRepository.FirstOrDefault(x => x.Id == id, includeProperties:"Category");
+
             var detailsVM = new DetailsVM
             {
-                Product = _db.Product.Include(x => x.Category).Where(x => x.Id == id).FirstOrDefault(),
+                Product = product,
                 ExistsCart = shoppingCartList.Any(x => x.ProductId == id)
             };
 

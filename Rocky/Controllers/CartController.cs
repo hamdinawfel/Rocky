@@ -15,25 +15,40 @@ using Rocky_Utility.Constants;
 using Rocky.Extensions;
 using Rocky_Utility.Configuration.Models;
 using Rocky_Utility.Email;
+using Rocky_DataAccess.Repository.IRepository;
+using System;
+using Rocky_DataAccess.Repository;
 
 namespace Rocky.Controllers
 {
     [Authorize]
     public class CartController : Controller
     {
-        private readonly RockyDbContext _db;
+        private readonly IProductRepository _productRepository;
+        private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly IInquiryHeaderRepository _inquiryHeaderRepository;
+        private readonly IInquiryDetailRepository _inquiryDetailRepository;
+
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IEmailSenderService _emailSenderService;
         private readonly IOptions<EmailSettings> _emailSettings;
 
         [BindProperty]
         public ProductUserVM ProductUserVM { get; set; }
-        public CartController(RockyDbContext db,
+        public CartController(IProductRepository productRepository,
+                              IApplicationUserRepository applicationUserRepository,
+                              IInquiryHeaderRepository inquiryHeaderRepository,
+                              IInquiryDetailRepository inquiryDetailRepository,
+
                               IWebHostEnvironment webHostEnvironment,
                               IEmailSenderService emailSenderService,
                               IOptions<EmailSettings> emailSettings)
         {
-            _db = db;
+            _productRepository = productRepository;
+            _applicationUserRepository = applicationUserRepository;
+            _inquiryHeaderRepository = inquiryHeaderRepository;
+            _inquiryDetailRepository = inquiryDetailRepository;
+
             _webHostEnvironment = webHostEnvironment;
             _emailSenderService = emailSenderService;
             _emailSettings = emailSettings;
@@ -53,7 +68,7 @@ namespace Rocky.Controllers
 
             var productsIds = shoppingCartList.Select(x => x.ProductId).ToList();
 
-            var productsInCart = _db.Product.Where(x => productsIds.Contains(x.Id)).ToList();
+            var productsInCart = _productRepository.FindAll(x => productsIds.Contains(x.Id));
 
             return View(productsInCart);
         }
@@ -92,10 +107,6 @@ namespace Rocky.Controllers
 
         public IActionResult Summary()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);  //var userId = User.FindFirstValue(ClaimTypes.Name);
-
-
             var shoppingCartList = new List<ShoppingCart>();
 
             bool sessionExist = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCard) != null &&
@@ -108,11 +119,13 @@ namespace Rocky.Controllers
 
             var productsIds = shoppingCartList.Select(x => x.ProductId).ToList();
 
-            var products = _db.Product.Where(x => productsIds.Contains(x.Id)).ToList();
+            var products = _productRepository.FindAll(x => productsIds.Contains(x.Id)).ToList();
+
+            var currentUserId = GetCurrentUserId();
 
             ProductUserVM productUserVM = new ProductUserVM
             {
-                ApplicationUser = _db.ApplicationUser.FirstOrDefault(x => x.Id == claims.Value),
+                ApplicationUser = _applicationUserRepository.FirstOrDefault(x => x.Id == currentUserId),
                 Products = products
             };
 
@@ -125,6 +138,56 @@ namespace Rocky.Controllers
         [ActionName("Summary")]
         public IActionResult SummaryPost(ProductUserVM ProductUserVM)
         {
+            SendConfirmationEmail();
+            UpdateInquiry();
+            return RedirectToAction(nameof(InquiryConfirmation));
+        }
+
+        public IActionResult InquiryConfirmation()
+        {
+            HttpContext.Session.Clear();
+            return View();
+        }
+
+        private string GetCurrentUserId()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier); //var userId = User.FindFirstValue(ClaimTypes.Name)
+
+            return claims.Value;
+        }
+        private void UpdateInquiry()
+        {
+            var currentUserId = GetCurrentUserId();
+
+            var inquiryHeader = new InquiryHeader
+            {
+                ApplicationUserId = currentUserId,
+                InquiryDate = DateTime.UtcNow,
+                Email = ProductUserVM.ApplicationUser.Email,
+                PhoneNumber = ProductUserVM.ApplicationUser.PhoneNumber,
+                FullName = ProductUserVM.ApplicationUser.FullName,
+            };
+
+            _inquiryHeaderRepository.Add(inquiryHeader);
+            _inquiryHeaderRepository.SaveChanges();
+
+            foreach (var product in ProductUserVM.Products)
+            {
+                var inquiryDetail = new InquiryDetail
+                {
+                    ProductId = product.Id,
+                    InquiryHeaderId = inquiryHeader.Id
+                };
+
+                _inquiryDetailRepository.Add(inquiryDetail);
+            }
+
+            _inquiryDetailRepository.SaveChanges();
+        }
+
+        private void SendConfirmationEmail()
+        {
             var PathToTemplate = _webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
                 + "templates" + Path.DirectorySeparatorChar.ToString() +
                 "Inquiry.html";
@@ -135,10 +198,6 @@ namespace Rocky.Controllers
             {
                 HtmlBody = sr.ReadToEnd();
             }
-            //Name: { 0}
-            //Email: { 1}
-            //Phone: { 2}
-            //Products: {3}
 
             StringBuilder productListSB = new StringBuilder();
             foreach (var prod in ProductUserVM.Products)
@@ -154,21 +213,13 @@ namespace Rocky.Controllers
 
 
 
-             _emailSenderService.SendEmailAsync(new EmailDto
+            _emailSenderService.SendEmailAsync(new EmailDto
             {
                 Addresses = _emailSettings.Value.EmailAdmin,
                 Message = messageBody,
                 Subject = subject,
                 //Attachments = new List<string> { filePath }
             });
-
-            return RedirectToAction(nameof(InquiryConfirmation));
-        }
-
-        public IActionResult InquiryConfirmation()
-        {
-            HttpContext.Session.Clear();
-            return View();
         }
     }
 }
