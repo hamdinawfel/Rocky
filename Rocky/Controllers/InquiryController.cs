@@ -84,6 +84,8 @@ namespace Rocky.Controllers
             _inquiryDetailRepository.SaveChanges();
             _inquiryDetailRepository.SaveChanges();
 
+            TempData[WC.Success] = "Action completed successfully";
+
             return RedirectToAction(nameof(Index));
         }
         #region API CALLS

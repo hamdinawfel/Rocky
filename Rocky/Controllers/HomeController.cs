@@ -85,6 +85,7 @@ namespace Rocky.Controllers
             if (HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCard) != null &&
                 HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCard).Count() > 0)
             {
+                TempData[WC.Success] = "Item add to cart successfully";
                 shoppingCartList = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCard);
             }
 
@@ -92,6 +93,7 @@ namespace Rocky.Controllers
 
             if(itemToRemove != null)
             {
+                TempData[WC.Success] = "Item removed from cart successfully";
                 shoppingCartList.Remove(itemToRemove);
             }
 
