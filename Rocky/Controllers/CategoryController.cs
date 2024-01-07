@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models;
+using Rocky_Utility.Constants;
 using System.Collections.Generic;
 
 namespace Rocky.Controllers
@@ -31,10 +32,12 @@ namespace Rocky.Controllers
             {
                 _categoryRepository.Add(category);
                 _categoryRepository.SaveChanges();
+                TempData[WC.Success] = "Category created successfully";
                 return RedirectToAction("Index");
             }
             else
             {
+                TempData[WC.Error] = "Error while creating category";
                 return View(category);
             }
         }
@@ -63,10 +66,13 @@ namespace Rocky.Controllers
             {
                 _categoryRepository.Update(category);
                 _categoryRepository.SaveChanges();
+                TempData[WC.Success] = "Category updated successfully";
+
                 return RedirectToAction("Index");
             }
             else
             {
+                TempData[WC.Error] = "Error while updating category";
                 return View(category);
             }
         }
@@ -100,6 +106,9 @@ namespace Rocky.Controllers
 
             _categoryRepository.Remove(category);
             _categoryRepository.SaveChanges();
+
+            TempData[WC.Success] = "Category deleted successfully";
+
             return RedirectToAction("Index");
         }
     }

@@ -99,7 +99,7 @@ namespace Rocky.Controllers
                     }
 
                     productVM.Product.ImageUrl = fileName + extension;
-
+                    TempData[WC.Success] = "Product created successfully";
                     _productRepository.Add(productVM.Product);
                 }
                 else
@@ -132,6 +132,7 @@ namespace Rocky.Controllers
                         productVM.Product.ImageUrl = objFromDb.ImageUrl;
                     }
 
+                    TempData[WC.Success] = "Product updated successfully";
                     _productRepository.Update(productVM.Product);
                 }
 
@@ -193,6 +194,7 @@ namespace Rocky.Controllers
 
             _productRepository.Remove(productToDelete);
             _productRepository.SaveChanges();
+            TempData[WC.Success] = "Product delete successfully";
             return RedirectToAction("Index");
         }
     }
