@@ -22,7 +22,11 @@ namespace Rocky_DataAccess.Repository
 
         void Add(T entity);
 
+        void AddRange(IEnumerable<T> entities);
+
         void Remove(T entity);
+
+        void RemoveRange(IEnumerable<T> entities);
 
         void SaveChanges();
     }

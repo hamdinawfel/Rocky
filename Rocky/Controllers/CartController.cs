@@ -18,6 +18,7 @@ using Rocky_Utility.Email;
 using Rocky_DataAccess.Repository.IRepository;
 using System;
 using Rocky_DataAccess.Repository;
+using Microsoft.AspNetCore.Http;
 
 namespace Rocky.Controllers
 {
@@ -172,6 +173,8 @@ namespace Rocky.Controllers
             _inquiryHeaderRepository.Add(inquiryHeader);
             _inquiryHeaderRepository.SaveChanges();
 
+            var inquiriesDetail = new List<InquiryDetail>();
+
             foreach (var product in ProductUserVM.Products)
             {
                 var inquiryDetail = new InquiryDetail
@@ -180,9 +183,10 @@ namespace Rocky.Controllers
                     InquiryHeaderId = inquiryHeader.Id
                 };
 
-                _inquiryDetailRepository.Add(inquiryDetail);
+                inquiriesDetail.Add(inquiryDetail);
             }
 
+            _inquiryDetailRepository.AddRange(inquiriesDetail);
             _inquiryDetailRepository.SaveChanges();
         }
 

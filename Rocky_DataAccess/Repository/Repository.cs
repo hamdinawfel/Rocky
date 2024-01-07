@@ -22,6 +22,11 @@ namespace Rocky_DataAccess.Repository
             dbSet.Add(entity);
         }
 
+        public void AddRange(IEnumerable<T> entities)
+        {
+            dbSet.AddRange(entities);
+        }
+
         public T Find(int id)
         {
             return dbSet.Find(id);
@@ -85,6 +90,11 @@ namespace Rocky_DataAccess.Repository
         public void Remove(T entity)
         {
             dbSet.Remove(entity);
+        }
+
+        public void RemoveRange(IEnumerable<T> entities)
+        {
+            dbSet.RemoveRange(entities);
         }
 
         public void SaveChanges()
