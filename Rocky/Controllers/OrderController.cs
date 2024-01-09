@@ -5,10 +5,13 @@ namespace Rocky.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly IOrderRepository _orderRepository;
-        public OrderController(IOrderRepository orderRepository)
+        private readonly IOrderHeaderRepository _orderHeaderRepository;
+        private readonly IOrderDetailRepository _orderDetailRepository;
+        public OrderController(IOrderHeaderRepository orderHeaderRepository,
+                               IOrderDetailRepository orderDetailRepository)
         {
-            _orderRepository = orderRepository;
+            _orderHeaderRepository = orderHeaderRepository;
+            _orderDetailRepository = orderDetailRepository;
         }
         public IActionResult Index()
         {

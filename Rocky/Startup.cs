@@ -44,7 +44,8 @@ namespace Rocky
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IInquiryHeaderRepository, InquiryHeaderRopository>();
             services.AddScoped<IInquiryDetailRepository, InquiryDetailRepository>();
-            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderHeaderRepository, OrderHeaderRepository>();
+            services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
             services.AddSession(options =>

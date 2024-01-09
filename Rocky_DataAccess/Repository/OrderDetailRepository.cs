@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Rocky_DataAccess.Repository
 {
-    public class OrderRepository : Repository<Order>, IOrderRepository
+    public class OrderDetailRepository : Repository<OrderDetail>, IOrderDetailRepository
     {
-        public OrderRepository(RockyDbContext db) : base(db)
+        public OrderDetailRepository(RockyDbContext db) : base(db)
         {
 
         }

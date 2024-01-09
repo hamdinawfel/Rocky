@@ -29,6 +29,8 @@ namespace Rocky.Controllers
         private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly IInquiryHeaderRepository _inquiryHeaderRepository;
         private readonly IInquiryDetailRepository _inquiryDetailRepository;
+        private readonly IOrderHeaderRepository _orderHeaderRepository;
+        private readonly IOrderDetailRepository _orderDetailRepository;
 
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IEmailSenderService _emailSenderService;
@@ -40,6 +42,8 @@ namespace Rocky.Controllers
                               IApplicationUserRepository applicationUserRepository,
                               IInquiryHeaderRepository inquiryHeaderRepository,
                               IInquiryDetailRepository inquiryDetailRepository,
+                              IOrderHeaderRepository orderHeaderRepository,
+                              IOrderDetailRepository orderDetailRepository,
 
                               IWebHostEnvironment webHostEnvironment,
                               IEmailSenderService emailSenderService,
@@ -49,6 +53,8 @@ namespace Rocky.Controllers
             _applicationUserRepository = applicationUserRepository;
             _inquiryHeaderRepository = inquiryHeaderRepository;
             _inquiryDetailRepository = inquiryDetailRepository;
+            _orderHeaderRepository = orderHeaderRepository;
+            _orderDetailRepository = orderDetailRepository;
 
             _webHostEnvironment = webHostEnvironment;
             _emailSenderService = emailSenderService;
@@ -141,6 +147,7 @@ namespace Rocky.Controllers
         {
             SendConfirmationEmail();
             UpdateInquiry();
+            CreateOrder();
             return RedirectToAction(nameof(InquiryConfirmation));
         }
 
@@ -225,5 +232,41 @@ namespace Rocky.Controllers
                 //Attachments = new List<string> { filePath }
             });
         }
+
+        private void CreateOrder()
+        {
+            var currentUserId = GetCurrentUserId();
+
+            OrderHeader orderHeader = new OrderHeader()
+            {
+                CreatedByUserId = currentUserId,
+                FinalOrderTotal = ProductUserVM.Products.Sum(x => x.Price),
+                City = ProductUserVM.ApplicationUser.City,
+                StreetAddress = ProductUserVM.ApplicationUser.StreetAddress,
+                State = ProductUserVM.ApplicationUser.State,
+                PostalCode = ProductUserVM.ApplicationUser.PostalCode,
+                FullName = ProductUserVM.ApplicationUser.FullName,
+                Email = ProductUserVM.ApplicationUser.Email,
+                PhoneNumber = ProductUserVM.ApplicationUser.PhoneNumber,
+                OrderDate = DateTime.Now,
+                OrderStatus = WC.StatusPending
+            };
+            _orderHeaderRepository.Add(orderHeader);
+            _orderHeaderRepository.SaveChanges();
+
+
+            foreach (var prod in ProductUserVM.Products)
+            {
+                OrderDetail orderDetail = new OrderDetail()
+                {
+                    OrderHeaderId = orderHeader.Id,
+                    ProductId = prod.Id
+                };
+                _orderDetailRepository.Add(orderDetail);
+
+            }
+
+            _orderDetailRepository.SaveChanges();
+        }  
     }
 }
