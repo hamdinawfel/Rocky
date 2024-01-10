@@ -8,7 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Rocky_DataAccess.Data;
 using Rocky_DataAccess.Repository;
 using Rocky_DataAccess.Repository.IRepository;
+using Rocky_Utility.BrainTree;
 using Rocky_Utility.Configuration.Models;
+using Rocky_Utility.Configurations.Models;
 using Rocky_Utility.Email;
 using System;
 
@@ -31,6 +33,7 @@ namespace Rocky
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
             services.Configure<EmailSettings>(Configuration.GetSection("Email"));
+            services.Configure<BrainTreeSettings>(Configuration.GetSection("BrainTree"));
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                      .AddDefaultTokenProviders()
@@ -47,6 +50,7 @@ namespace Rocky
             services.AddScoped<IOrderHeaderRepository, OrderHeaderRepository>();
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+            services.AddScoped<IBrainTreeGate, BrainTreeGate>();
 
             services.AddSession(options =>
             {

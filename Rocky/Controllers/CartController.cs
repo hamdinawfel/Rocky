@@ -17,8 +17,10 @@ using Rocky_Utility.Configuration.Models;
 using Rocky_Utility.Email;
 using Rocky_DataAccess.Repository.IRepository;
 using System;
-using Rocky_DataAccess.Repository;
 using Microsoft.AspNetCore.Http;
+using Rocky_Utility.Configurations.Models;
+using Rocky_Utility.BrainTree;
+using Braintree;
 
 namespace Rocky.Controllers
 {
@@ -31,10 +33,12 @@ namespace Rocky.Controllers
         private readonly IInquiryDetailRepository _inquiryDetailRepository;
         private readonly IOrderHeaderRepository _orderHeaderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IBrainTreeGate _brainTreeGate;
 
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IEmailSenderService _emailSenderService;
         private readonly IOptions<EmailSettings> _emailSettings;
+        private readonly IOptions<BrainTreeSettings> _brainTreeSettingsSettings;
 
         [BindProperty]
         public ProductUserVM ProductUserVM { get; set; }
@@ -44,10 +48,12 @@ namespace Rocky.Controllers
                               IInquiryDetailRepository inquiryDetailRepository,
                               IOrderHeaderRepository orderHeaderRepository,
                               IOrderDetailRepository orderDetailRepository,
+                              IBrainTreeGate brainTreeGate,
 
                               IWebHostEnvironment webHostEnvironment,
                               IEmailSenderService emailSenderService,
-                              IOptions<EmailSettings> emailSettings)
+                              IOptions<EmailSettings> emailSettings,
+                              IOptions<BrainTreeSettings> brainTreeSettingsSettings)
         {
             _productRepository = productRepository;
             _applicationUserRepository = applicationUserRepository;
@@ -55,10 +61,12 @@ namespace Rocky.Controllers
             _inquiryDetailRepository = inquiryDetailRepository;
             _orderHeaderRepository = orderHeaderRepository;
             _orderDetailRepository = orderDetailRepository;
+            _brainTreeGate = brainTreeGate;
 
             _webHostEnvironment = webHostEnvironment;
             _emailSenderService = emailSenderService;
             _emailSettings = emailSettings;
+            _brainTreeSettingsSettings = brainTreeSettingsSettings;
         }
 
         public IActionResult Index()
@@ -128,6 +136,10 @@ namespace Rocky.Controllers
 
             var products = _productRepository.FindAll(x => productsIds.Contains(x.Id)).ToList();
 
+            var gateway = _brainTreeGate.GetGateway();
+            var clientToken = gateway.ClientToken.Generate();
+            ViewBag.ClientToken = clientToken;
+
             var currentUserId = GetCurrentUserId();
 
             ProductUserVM productUserVM = new ProductUserVM
@@ -143,11 +155,11 @@ namespace Rocky.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Summary")]
-        public IActionResult SummaryPost(ProductUserVM ProductUserVM)
+        public IActionResult SummaryPost(IFormCollection collection, ProductUserVM ProductUserVM)
         {
             SendConfirmationEmail();
             UpdateInquiry();
-            CreateOrder();
+            CreateOrder(collection);
             return RedirectToAction(nameof(InquiryConfirmation));
         }
 
@@ -233,7 +245,7 @@ namespace Rocky.Controllers
             });
         }
 
-        private void CreateOrder()
+        private void CreateOrder(IFormCollection collection)
         {
             var currentUserId = GetCurrentUserId();
 
@@ -267,6 +279,39 @@ namespace Rocky.Controllers
             }
 
             _orderDetailRepository.SaveChanges();
+
+            MakeTransaction(collection, orderHeader);
         }  
+    
+        private void MakeTransaction(IFormCollection collection, OrderHeader orderHeader)
+        {
+            string nonceFromTheClient = collection["payment_method_nonce"];
+
+            var request = new TransactionRequest
+            {
+                Amount = Convert.ToDecimal(orderHeader.FinalOrderTotal),
+                PaymentMethodNonce = nonceFromTheClient,
+                OrderId = orderHeader.Id.ToString(),
+                Options = new TransactionOptionsRequest
+                {
+                    SubmitForSettlement = true
+                }
+            };
+
+            var gateway = _brainTreeGate.GetGateway();
+            Result<Transaction> result = gateway.Transaction.Sale(request);
+
+            if (result.Target.ProcessorResponseText == "Approved")
+            {
+                orderHeader.TransactionId = result.Target.Id;
+                orderHeader.OrderStatus = WC.StatusApproved;
+            }
+            else
+            {
+                orderHeader.OrderStatus = WC.StatusCancelled;
+            }
+            _orderHeaderRepository.SaveChanges();
+            //return RedirectToAction(nameof(InquiryConfirmation), new { id = orderHeader.Id });
+        }
     }
 }
