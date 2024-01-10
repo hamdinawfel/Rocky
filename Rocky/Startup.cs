@@ -52,6 +52,12 @@ namespace Rocky
             services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             services.AddScoped<IBrainTreeGate, BrainTreeGate>();
 
+            //services.AddAuthentication().AddFacebook(options =>
+            //{
+            //    options.AppId = "";
+            //    options.AppSecret = "";
+            //});
+
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(10);
