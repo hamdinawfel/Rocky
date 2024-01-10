@@ -24,7 +24,7 @@ using Braintree;
 
 namespace Rocky.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = WC.AdminRole)]
     public class CartController : Controller
     {
         private readonly IProductRepository _productRepository;

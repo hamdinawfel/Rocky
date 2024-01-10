@@ -1,4 +1,5 @@
 ﻿using Braintree;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Rocky_DataAccess.Repository.IRepository;
 using Rocky_Models;
@@ -10,6 +11,7 @@ using System.Linq;
 
 namespace Rocky.Controllers
 {
+    [Authorize(Roles = WC.AdminRole)]
     public class OrderController : Controller
     {
         private readonly IOrderHeaderRepository _orderHeaderRepository;
@@ -117,5 +119,22 @@ namespace Rocky.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        public IActionResult UpdateOrderDetails()
+        {
+            OrderHeader orderHeaderFromDb = _orderHeaderRepository.FirstOrDefault(u => u.Id == OrderVM.OrderHeader.Id);
+            orderHeaderFromDb.FullName = OrderVM.OrderHeader.FullName;
+            orderHeaderFromDb.PhoneNumber = OrderVM.OrderHeader.PhoneNumber;
+            orderHeaderFromDb.StreetAddress = OrderVM.OrderHeader.StreetAddress;
+            orderHeaderFromDb.City = OrderVM.OrderHeader.City;
+            orderHeaderFromDb.State = OrderVM.OrderHeader.State;
+            orderHeaderFromDb.PostalCode = OrderVM.OrderHeader.PostalCode;
+            orderHeaderFromDb.Email = OrderVM.OrderHeader.Email;
+
+            _orderHeaderRepository.SaveChanges();
+            TempData[WC.Success] = "Order Details Updated Successfully";
+
+            return RedirectToAction("Details", "Order", new { id = orderHeaderFromDb.Id });
+        }
     }
 }
